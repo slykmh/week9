@@ -3,45 +3,45 @@ podTemplate(yaml: '''
     kind: Pod
     spec:
       containers:
-      - name: cloud-sdk
-        image: google/cloud-sdk
+      - name: gradle
+        image: gradle:8-jdk8
         command:
         - sleep
         args:
-        - 9999999
+        - 99d
         volumeMounts:
         - name: shared-storage
-        mountPath: /mnt
-        - name: google-cloud-key
-        mountPath: /var/secrets/google
-        env:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/secrets/google/umls23-1fd328cc3b0f.json
-        restartPolicy: Never
-        volumes:
-        - name: shared-storage
-          persistentVolumeClaim:
-            claimName: jenkins-pv-claim
-        - name: google-cloud-key
-          secret:
-            secretName: sdk-key
+          mountPath: /mnt        
+      - name: centos
+        image: centos
+        command:
+        - sleep
+        args:
+        - 99d
+      restartPolicy: Never
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: jenkins-pv-claim
+      - name: kaniko-secret
+        secret:
+            secretName: dockercred
+            items:
+            - key: .dockerconfigjson
+              path: config.json
 ''') {
   node(POD_LABEL) {
-    stage('Deploying to prod') {
-      container('cloud-sdk') {
-        stage('Build a gradle project') {
-          sh '''
-          echo 'namespaces in the staging environment'
-          kubectl get ns
-          gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
-          gcloud container clusters get-credentials hello-cluster --region
-us-west1 --project umls23
-          echo 'namespaces in the prod environment'
-          kubectl get ns
-          '''
+
+  stage('Deploy centos container') {
+    git branch: 'main', url: 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
+    container('centos') {
+      stage('calculator') {
+        sh '''
+        echo pwd
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        '''
         }
       }
     }
   }
 }
-
