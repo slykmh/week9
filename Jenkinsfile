@@ -30,19 +30,17 @@ podTemplate(yaml: '''
             - key: .dockerconfigjson
               path: config.json
 ''') {
-  node(POD_LABEL) {
-
-  stage('Deploy centos container') {
-    git branch: 'main', url: 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
-    container('centos') {
-      stage('calculator') {
+node(POD_LABEL) {
+    stage('Kubernetes on gradle container') {
+    git 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
+    container('gradle') {
+      stage('start calculator') {
         sh '''
-        echo pwd
         cd Chapter08/sample1
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
-        ./kubectl apply -f calculator.yaml -n staging
-        ./kubectl apply -f hazelcast.yaml -n staging
+        ./kubectl apply -f calculator.yaml
+        ./kubectl apply -f hazelcast.yaml
         '''
         }
       }
