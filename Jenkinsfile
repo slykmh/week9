@@ -43,6 +43,9 @@ node(POD_LABEL) {
         ./kubectl get pods
         ./kubectl apply -f calculator.yaml -n staging
         ./kubectl apply -f hazelcast.yaml -n staging
+        sleep 60
+        ./kubectl get pods -n staging
+        ./kubectl get pods
         '''
         }
       }
