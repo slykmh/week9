@@ -1,49 +1,47 @@
 podTemplate(yaml: '''
     apiVersion: v1
-    kind: Pod
-    spec:
-      containers:
-      - name: gradle
-        image: gradle:8-jdk8
-        command:
-        - sleep
-        args:
-        - 99d
-        volumeMounts:
-        - name: shared-storage
-          mountPath: /mnt        
-      - name: centos
-        image: centos
-        command:
-        - sleep
-        args:
-        - 99d
-      restartPolicy: Never
-      volumes:
-      - name: shared-storage
-        persistentVolumeClaim:
-          claimName: jenkins-pv-claim
-      - name: kaniko-secret
-        secret:
-            secretName: dockercred
-            items:
-            - key: .dockerconfigjson
-              path: config.json
+      kind: Pod
+      spec:
+        containers:
+           - name: centos
+             image: centos
+             command:
+             - sleep
+             args:
+                - 99d
+           - name: gradle
+              image: gradle:jdk8
+              command:
+               - sleep
+              args:
+                 - 99d
+            - name: cloud-sdk
+              image: google/cloud-sdk
+              command:
+                - sleep
+              args:
+                - 9999999
+              volumeMounts:
+                 - name: shared-storage
+                  mountPath: /mnt
+                - name: google-cloud-key
+                   mountPath: /var/secrets/google
+              env:
+               - name: GOOGLE_APPLICATION_CREDENTIALS
+                 value: /var/secrets/google/uml-devops-03fc6f57f6c6.json
+                 restartPolicy: Never
+                 volumes:
+                - name: shared-storage
+                    persistentVolumeClaim:
+                      claimName: jenkins-pv-claim
+                - name: google-cloud-key
+                    secret:
+                      secretName: sdk-key
 ''') {
-node(POD_LABEL) {
-    stage('pre upgrade testing'){
-          try {
-                sh '''
-                test $(curl calculator-service:8080/sum?a=6\\&b=2) -eq 8 && echo 'pass' || 'fail'
-                test $(curl calculator-service:8080/div?a=6\\&b=2) -eq 3 && echo 'pass' || 'fail'
-                test $(curl calculator-service:8080/div?a=6\\&b=0) -eq 0 && echo 'pass' || 'fail'
-                '''
-              } catch (Exception E) {
-                  echo 'Failure detected'
-          }
-    stage('Kubernetes on gradle container') {
+    node(POD_LABEL) {
+    stage('Kubernetes on Centos container') {
     git 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
-    container('gradle') {
+    container('centos') {
       stage('start calculator') {
         sh '''
         cd Chapter08/sample1
@@ -59,18 +57,6 @@ node(POD_LABEL) {
         '''
         }
       }
-    stage('post upgrade testing'){
-          try {
-                sh '''
-                test $(curl calculator-service:8080/sum?a=6\\&b=2) -eq 8 && echo 'pass' || 'fail'
-                test $(curl calculator-service:8080/div?a=6\\&b=2) -eq 3 && echo 'pass' || 'fail'
-                test $(curl calculator-service:8080/div?a=6\\&b=0) -eq 0 && echo 'pass' || 'fail'
-                '''
-              } catch (Exception E) {
-                  echo 'Failure detected'
-          }
     }
   }
-}
-}
 }
