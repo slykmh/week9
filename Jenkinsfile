@@ -66,22 +66,22 @@ podTemplate(yaml: '''
         sh '''
         pwd
         ls -l
-	cd .
+	cd ..
         pwd
         ls -l
-        cd .
+        cd ..
         pwd
         ls -l
-        cd .
+        cd ..
         pwd
         ls -l
-        cd .
+        cd ..
         pwd
         ls -l
-        cd .
+        cd ..
         pwd
         ls -l
-        cd .
+        cd ..
         pwd
         ls -l
         //cd Chapter9/sample3
