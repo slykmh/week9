@@ -67,7 +67,6 @@ podTemplate(yaml: '''
         pwd
         ls -l
         cd Chapter08/sample1
-        kubectl create namespace production
         kubectl get ns
         gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
         gcloud container clusters get-credentials gkeuml-cluster --region us-central1 --project uml-devops
