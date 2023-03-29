@@ -68,7 +68,6 @@ podTemplate(yaml: '''
         ls -l
         cd Chapter09/sample3
         gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
-        gcloud config set project uml-devops
         gcloud container clusters get-credentials gkeuml-cluster --region us-central1 --project uml-devops
         ''' 
         }
