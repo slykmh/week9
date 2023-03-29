@@ -54,6 +54,8 @@ podTemplate(yaml: '''
         sleep 120
         ./kubectl get pods -n staging
         ./kubectl get pods
+        chmod +x ./gradlew
+        ./gradlew smokeTest -Dcalculator.url=http://calculator-service.staging.svc.cluster.local:8080
         '''
         }
       }
