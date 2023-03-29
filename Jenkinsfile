@@ -42,7 +42,7 @@ podTemplate(yaml: '''
     stage('Kubernetes on Centos container') {
     git 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
     container('cloud-sdk') {
-      stage('start calculator') {
+      stage('start calculator and smoke test') {
         sh '''
         cd Chapter08/sample1
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -60,5 +60,15 @@ podTemplate(yaml: '''
         }
       }
     }
-  }
+    stage ('Deploy to Google Prod Kubernetes Cluster') {
+      container('cloud-sdk') {
+        git 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
+        sh '''
+        cd Chapter9/sample3
+        gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
+        gcloud container clusters get-credentials gkeuml-cluster --region us-central1 --project uml-devops
+        ''' 
+        }
+      }
+    }
 }
