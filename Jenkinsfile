@@ -66,7 +66,7 @@ podTemplate(yaml: '''
         sh '''
         pwd
         ls -l
-        cd /home/jenkins/agent/workspace/week9Chapter9/sample3
+        cd /home/jenkins/agent/workspace/week9/Chapter9/sample3
         gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
         gcloud container clusters get-credentials gkeuml-cluster --region us-central1 --project uml-devops
         ''' 
