@@ -41,7 +41,7 @@ podTemplate(yaml: '''
     node(POD_LABEL) {
     stage('Kubernetes on Centos container') {
     git 'https://github.com/slykmh/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
-    container('cloud sdk') {
+    container('cloud-sdk') {
       stage('start calculator') {
         sh '''
         cd Chapter08/sample1
