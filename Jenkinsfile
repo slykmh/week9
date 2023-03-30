@@ -70,8 +70,8 @@ podTemplate(yaml: '''
         kubectl get ns
         gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
         gcloud container clusters get-credentials gkeuml-cluster --region us-central1 --project uml-devops
-        kubectl apply -f ./calculator.yaml -n production
-        kubectl apply -f ./hazelcast.yaml -n production
+        kubectl apply -f ./calculator.yaml -n default
+        kubectl apply -f ./hazelcast.yaml -n default
         sleep 120
         kubectl get pods -n production
         ''' 
